@@ -14,6 +14,12 @@ variable "allowed_inbound_cidr_blocks" {
   default     = []
 }
 
+variable "allowed_inbound_ipv6_cidr_blocks" {
+  description = "A list of CIDR-formatted IPv6 address ranges from which the EC2 Instances will allow connections to Consul"
+  type        = list(string)
+  default     = []
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.

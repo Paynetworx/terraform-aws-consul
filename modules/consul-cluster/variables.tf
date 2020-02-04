@@ -28,6 +28,12 @@ variable "allowed_inbound_cidr_blocks" {
   type        = list(string)
 }
 
+variable "allowed_inbound_ipv6_cidr_blocks" {
+  description = "A list of CIDR-formatted IPv6 address ranges from which the EC2 Instances will allow connections to Consul"
+  type        = list(string)
+  default     = []
+}
+
 variable "user_data" {
   description = "A User Data script to execute while the server is booting. We recommend passing in a bash script that executes the run-consul script, which should have been installed in the Consul AMI by the install-consul module."
   type        = string
@@ -76,6 +82,12 @@ variable "ssh_key_name" {
 
 variable "allowed_ssh_cidr_blocks" {
   description = "A list of CIDR-formatted IP address ranges from which the EC2 Instances will allow SSH connections"
+  type        = list(string)
+  default     = []
+}
+
+variable "allowed_ssh_ipv6_cidr_blocks" {
+  description = "A list of CIDR-formatted IPv6 address ranges from which the EC2 Instances will allow SSH connections"
   type        = list(string)
   default     = []
 }
