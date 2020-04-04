@@ -231,18 +231,18 @@ function generate_consul_config {
   local -r redundancy_zone_tag="${17}"
   local -r disable_upgrade_migration="${18}"
   local -r upgrade_version_tag=${19}
+  local -r instance_ip_address=${20}
+  local -r client_ip_address=${21}
   local -r config_path="$config_dir/$CONSUL_CONFIG_FILE"
 
-  shift 19
+  shift 21
   local -r recursors=("$@")
 
   local instance_id=""
-  local instance_ip_address=""
   local instance_region=""
   local ui="false"
 
   instance_id=$(get_instance_id)
-  instance_ip_address=$(get_instance_ip_address)
   instance_region=$(get_instance_region)
 
   local retry_join_json=""
@@ -315,7 +315,7 @@ EOF
   "advertise_addr": "$instance_ip_address",
   "bind_addr": "$instance_ip_address",
   $bootstrap_expect
-  "client_addr": "0.0.0.0",
+  "client_addr": "$client_ip_address",
   "datacenter": "$datacenter",
   "node_name": "$instance_id",
   $recursors_config
@@ -437,6 +437,8 @@ function run {
   local server_stabilization_time="$DEFAULT_AUTOPILOT_SERVER_STABILIZATION_TIME"
   local redundancy_zone_tag="$DEFAULT_AUTOPILOT_REDUNDANCY_ZONE_TAG"
   local disable_upgrade_migration="$DEFAULT_AUTOPILOT_DISABLE_UPGRADE_MIGRATION"
+  local instance_ip_address=""
+  local client_ip_address=""
 
   while [[ $# > 0 ]]; do
     local key="$1"
@@ -566,6 +568,16 @@ function run {
         recursors+=("$2")
         shift
         ;;
+      --instance-ip-address)
+        assert_not_empty "$key" "$2"
+        instance_ip_address="$2"
+        shift
+        ;;
+      --client-ip-address)
+        assert_not_empty "$key" "$2"
+        client_ip_address="$2"
+        shift
+        ;;
       --help)
         print_usage
         exit
@@ -610,6 +622,14 @@ function run {
 
   if [[ -z "$datacenter" ]]; then
     datacenter=$(get_instance_region)
+  fi
+
+  if [[ -z "$instance_ip_address" ]]; then
+    instance_ip_address=$(get_instance_ip_address)
+  fi
+
+  if [[ -z "$client_ip_address" ]]; then
+    client_ip_address=0.0.0.0
   fi
 
   if [[ "$skip_consul_config" == "true" ]]; then
