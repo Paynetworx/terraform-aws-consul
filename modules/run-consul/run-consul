@@ -663,6 +663,8 @@ function run {
       "$redundancy_zone_tag" \
       "$disable_upgrade_migration" \
       "$upgrade_version_tag" \
+      "$instance_ip_address" \
+      "$client_ip_address" \
       "${recursors[@]}"
   fi
 
